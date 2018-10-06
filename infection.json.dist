@@ -1,0 +1,35 @@
+{
+  "source": {
+    "directories": [
+      "src"
+    ]
+  },
+  "timeout": 10,
+  "logs": {
+    "text": "reports/infection.log",
+    "summary": "reports/infecrtion-summary.log",
+    "debug": "reports/infection-debug.log",
+    "badge": {
+      "branch": "master"
+    }
+  },
+  "mutators": {
+    "@default": true,
+    "@function_signature": false,
+    "IncrementInteger": {
+      "ignore": [
+        "Offdev\\Gpp\\Crawler::crawl"
+      ]
+    },
+    "OneZeroInteger": {
+      "ignore": [
+        "Offdev\\Gpp\\Crawler::crawl"
+      ]
+    },
+    "FunctionCallRemoval": {
+      "ignore": [
+        "Offdev\\Gpp\\Crawler::crawl"
+      ]
+    }
+  }
+}
