@@ -153,7 +153,7 @@ First, make sure to install the dependencies by running ```composer install```. 
 
 **PHP Code Sniffer**
 ```
-./vendor/bin/phpcs --colors --standard=PSR2 -v src/ tests/
+$ ./vendor/bin/phpcs --colors --standard=PSR2 -v src/ tests/
 Creating file list... DONE (13 files in queue)
 Changing into directory /Users/pascal/devel/gpp/src
 Processing Crawler.php [PHP => 419 tokens in 71 lines]... DONE in 25ms (0 errors, 0 warnings)
