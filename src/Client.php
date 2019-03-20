@@ -122,8 +122,9 @@ class Client implements ResponseHandlerInterface
                 return null;
         }
 
-        $what = is_object($middleware) ? get_class($middleware) :
-            (is_string($middleware) ? $middleware : $middlewareType);
+        $what = !is_object($middleware)
+            ? (is_string($middleware) ? $middleware : $middlewareType)
+            : get_class($middleware);
         throw new InvalidArgumentException("Invalid middleware: ".$what);
     }
 }

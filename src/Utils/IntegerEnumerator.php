@@ -33,9 +33,9 @@ class IntegerEnumerator implements RequestEnumeratorInterface
     /**
      * @param RequestInterface $request
      * @param ResponseInterface $response
-     * @return RequestInterface
+     * @return RequestInterface[]
      */
-    public function getNextRequest(RequestInterface $request, ResponseInterface $response = null): RequestInterface
+    public function getNextRequests(RequestInterface $request, ResponseInterface $response = null): array
     {
         $matches = [];
         $uri = $request->getUri();
@@ -46,6 +46,6 @@ class IntegerEnumerator implements RequestEnumeratorInterface
             return array_pop($matches) + 1;
         }, $uri);
 
-        return new Request($request->getMethod(), $newUri, $request->getHeaders(), $request->getBody());
+        return [new Request($request->getMethod(), $newUri, $request->getHeaders(), $request->getBody())];
     }
 }

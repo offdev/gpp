@@ -92,13 +92,13 @@ use GuzzleHttp\Psr7\Request;
 use Offdev\Gpp\Utils\IntegerEnumerator;
 
 $enumerator = new IntegerEnumerator();
-$nextRequest = $enumerator->getNextRequest(
+$nextRequests = $enumerator->getNextRequests(
     new Request('GET', 'https://www.worldhunger.org/articles/12/')
 );
 
-var_dump((string)$nextRequest->getUri());
+var_dump((string)$nextRequests[0]->getUri());
 ```
-
+****
 Output:
 ```
 $ php enumerator.php
@@ -120,14 +120,18 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 $client = new Client(new GuzzleClient(['exceptions' => false]));
-$crawler = new Crawler($client, new IntegerEnumerator());
+$crawler = new Crawler(
+    $client, // the GPP client
+    new Request('GET', 'https://www.worldhunger.org/articles/15/'), // inital request
+    new IntegerEnumerator() // enumerator
+);
 $crawler->crawl(
-    new Request('GET', 'https://www.worldhunger.org/articles/15/'),
     5, // time between each request, in seconds
     function ( // callback function, to control the crawler workflow
         RequestInterface $originalRequest,
         ResponseInterface $response
-    ) {
+    ): bool
+    {
         echo $response->getStatusCode().' : '.(string)$originalRequest->getUri().PHP_EOL;
         if ($response->getStatusCode() !== 200) {
             return true; // cancel crawling

@@ -30,7 +30,7 @@ final class IntegerEnumeratorTest extends TestCase
     {
         $originalRequest = new Request('GET', 'https://some-website.com/article/1?whatever=foo');
         $enumerator = new IntegerEnumerator();
-        $newRequest = $enumerator->getNextRequest($originalRequest);
+        $newRequest = $enumerator->getNextRequests($originalRequest)[0];
         $this->assertEquals('https://some-website.com/article/2?whatever=foo', (string)$newRequest->getUri());
     }
 
@@ -44,7 +44,6 @@ final class IntegerEnumeratorTest extends TestCase
     {
         $originalRequest = new Request('GET', 'lol');
         $enumerator = new IntegerEnumerator();
-        $newRequest = $enumerator->getNextRequest($originalRequest);
-        $this->assertEquals('https://some-website.com/article/1?whatever=foo', (string)$newRequest->getUri());
+        $newRequest = $enumerator->getNextRequests($originalRequest)[0];
     }
 }

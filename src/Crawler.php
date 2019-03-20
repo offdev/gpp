@@ -32,16 +32,21 @@ class Crawler
     /** @var RequestEnumeratorInterface */
     private $enumerator;
 
+    /** @var RequestInterface[] */
+    private static $requestStack = [];
+
     /**
      * Wraps around the client and accept an enumerator
      *
      * @param Client $client
+     * @param RequestInterface $firstRequest
      * @param RequestEnumeratorInterface $enumerator
      */
-    public function __construct(Client $client, RequestEnumeratorInterface $enumerator)
+    public function __construct(Client $client, RequestInterface $firstRequest, RequestEnumeratorInterface $enumerator)
     {
         $this->client = $client;
         $this->enumerator = $enumerator;
+        self::$requestStack[] = $firstRequest;
     }
 
     /**
@@ -50,22 +55,29 @@ class Crawler
      * Start crawling from a given request. Wait for a given interval between each
      * request. A passed callback can be used to control the workflow of the crawler.
      *
-     * @param RequestInterface $request
      * @param int $interval
      * @param callable $callback
      * @return RequestInterface
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function crawl(RequestInterface $request, int $interval = 1, callable $callback = null): RequestInterface
+    public function crawl(int $interval = 1, callable $callback = null): void
     {
+        if (empty(self::$requestStack)) {
+            return;
+        }
+        $request = array_shift(self::$requestStack);
         $response = $this->client->send($request);
         if (!is_null($callback)) {
             if ($callback($request, $response)) {
-                return $request;
+                return;
             }
         }
 
+        self::$requestStack = array_merge(
+            self::$requestStack,
+            $this->enumerator->getNextRequests($request, $response)
+        );
         sleep($interval);
-        return $this->crawl($this->enumerator->getNextRequest($request, $response), $interval, $callback);
+        $this->crawl($interval, $callback);
     }
 }

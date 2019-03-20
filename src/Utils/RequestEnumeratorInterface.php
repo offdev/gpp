@@ -34,7 +34,7 @@ interface RequestEnumeratorInterface
      *
      * @param RequestInterface $request
      * @param ResponseInterface $response
-     * @return RequestInterface
+     * @return RequestInterface[]
      */
-    public function getNextRequest(RequestInterface $request, ResponseInterface $response = null): RequestInterface;
+    public function getNextRequests(RequestInterface $request, ResponseInterface $response = null): array;
 }

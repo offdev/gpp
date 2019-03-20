@@ -36,7 +36,9 @@ final class CrawlerTest extends TestCase
     public function testCrawlerWorks(): void
     {
         $counter = 2;
-        $fnCallback = function () use (&$counter) {
+        $lastRequest = null;
+        $fnCallback = function ($req, $res) use (&$counter, &$lastRequest) {
+            $lastRequest = $req;
             if ($counter-- <= 0) {
                 return true;
             }
@@ -45,8 +47,11 @@ final class CrawlerTest extends TestCase
         $response = new Response(202, [], '[]');
         $mock = new MockHandler([$response, $response, $response]);
         $client = new Client(new GuzzleClient(['handler' => HandlerStack::create($mock)]));
-        $crawler = new Crawler($client, new IntegerEnumerator());
-        $lastRequest = $crawler->crawl(new Request('GET', 'https://website.com/articles/1?foo=bar'), 0, $fnCallback);
+        $crawler = new Crawler($client,
+            new Request('GET', 'https://website.com/articles/1?foo=bar'),
+            new IntegerEnumerator()
+        );
+        $crawler->crawl(0, $fnCallback);
         $this->assertEquals('https://website.com/articles/3?foo=bar', (string)$lastRequest->getUri());
     }
 }
